@@ -1,8 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput } from 'react-native';
-import LogInScreen from './src/screens/Auth/LogInScreen';
 import AuthMethodScreen from './src/screens/Auth/AuthMethodScreen';
+import LogInScreen from './src/screens/Auth/LogInScreen';
+import SignUpScreen from './src/screens/Auth/SignUpScreen';
+import AdPostScreen from './src/screens/Post/AdPostScreen';
 import LoadingScreen from './src/screens/LoadingScreen';
 
 //Fonts
@@ -35,7 +37,9 @@ export default function App() {
         <LoadingScreen />
       ) : (
         // <AuthMethodScreen/>
-        <LogInScreen />
+        // <LogInScreen />
+        // <SignUpScreen />
+        <AdPostScreen />
       )}
       
     </View>

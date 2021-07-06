@@ -35,6 +35,12 @@ const Input = (props) => {
 
     const inputStyle = selectVariant(props.type);
 
+    if(props.description){
+        Object.assign(inputStyle, {
+            height: 100,
+        })
+    }
+
     return (
         <View style={styles.groupInput}>
             <View style={styles.titleInput}>
@@ -48,6 +54,8 @@ const Input = (props) => {
                 placeholder={props.children}
                 placeholderTextColor={props.type == "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)"}
                 secureTextEntry={props.secure}
+                multiline={props.multiline}
+                numberOfLines={props.numberOfLines}
             />
         </View>
 

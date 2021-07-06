@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomText from '../../components/CustomText';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
@@ -8,8 +9,9 @@ import Input from '../../components/Input';
 //Colors
 import Colors from '../../res/Colors';
 
-const LogInScreen = () => {
+const SignUpScreen = () => {
 
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -37,14 +39,15 @@ const LogInScreen = () => {
 
         <View style={styles.inputContainer}> 
 
+            <Input type="dark" title="Nombre" value={name} onChange={query => setName(query)}>Ingrese su nombre aquí...</Input>
             <Input type="dark" title="Email" value={email} onChange={query => setEmail(query)}>Ingrese su email aquí...</Input>
             <Input type="dark" title="Contraseña" secure={true} value={password} onChange={query => setPassword(query)}>Ingrese su contraseña aquí...</Input>
 
             <View style={styles.submitSection}>
-                <Button type="dark">Iniciar sesión</Button>
+                <Button type="dark">Registrarse</Button>
                 <TouchableOpacity style={styles.textHelp} >
                     <CustomText type="italic" >
-                        ¿No tienes cuenta? Regístrate
+                        ¿Ya tienes una cuenta? Inicia sesión
                     </CustomText>
                 </TouchableOpacity>
             </View>
@@ -57,7 +60,7 @@ const LogInScreen = () => {
     )
 }
 
-export default LogInScreen
+export default SignUpScreen;
 
 const styles = StyleSheet.create({
     container: {

@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import CustomText from './CustomText';
+
 //Colors
-import Colors from '../res/Colors'
+import Colors from '../res/Colors';
 
 const Button = (props) => {
 
@@ -115,7 +116,7 @@ const Button = (props) => {
     const textStyle = selectVariant(props.type).text;
 
     return (
-        <TouchableOpacity style={containerStyle}>
+        <TouchableOpacity style={[containerStyle, props.style]}>
             <CustomText style={textStyle} type="bold">{props.children}</CustomText>
         </TouchableOpacity>
     )
@@ -123,19 +124,3 @@ const Button = (props) => {
 
 export default Button
 
-const styles = StyleSheet.create({
-    container: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.dark,
-        borderWidth: 1,
-        borderColor: "#000000",
-        borderRadius: 15,
-        width: '85%',
-        height: 45,
-    },
-    text: {
-        color: Colors.light,
-        fontSize: 15
-    }
-})
