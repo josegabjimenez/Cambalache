@@ -20,11 +20,12 @@ const AdPostScreen = () => {
     }
 
     const setData = (item) => {
-        setCategory(item)
+        setCategory(item.category)
     }
 
     return (
         <View style={styles.container}>
+            <ScrollView>
             <CustomText style={styles.title} type="bold">Publicar artículo</CustomText>
 
             <View style={styles.fieldsContainer}>
@@ -39,26 +40,12 @@ const AdPostScreen = () => {
 
                     <TouchableOpacity style={styles.picker} onPress={toggleModal}>
                         <View style={styles.row}>
-                            <CustomText type="regular">{category}</CustomText> 
+                            <CustomText style={{height: 18}} type="regular">{category}</CustomText> 
                         </View>
                         <View style={styles.row}>
                             <Icon name="downcircle" style={styles.icon}/>
                         </View>
                     </TouchableOpacity>
-
-                    <Modal 
-                        animationType="none" 
-                        transparent={true}
-                        visible={isModalActive}
-                        onRequestClose={() => toggleModal}
-                    >
-
-                        <ModalPicker 
-                            onPress={() => toggleModal()}
-                            setData={setData}
-                        />
-
-                    </Modal>
 
                 </View>
 
@@ -66,6 +53,22 @@ const AdPostScreen = () => {
                 <Button style={styles.button} type="dark">Publicar</Button>
 
             </View>
+            </ScrollView>
+
+            <Modal 
+                animationType="none" 
+                transparent={true}
+                visible={isModalActive}
+                onRequestClose={() => toggleModal}
+            >
+
+                <ModalPicker 
+                    onPress={() => toggleModal()}
+                    setData={setData}
+                />
+
+            </Modal>
+
         </View>
     )
 }
@@ -77,10 +80,10 @@ const styles = StyleSheet.create({
         flex: 1,
         width: Dimensions.get('window').width,
         backgroundColor: Colors.light,
-        alignItems: 'center',
     },
     title: {
         marginTop: 20,
+        alignSelf: 'center',
         fontSize: 24,
         shadowColor: "#000",
         shadowOffset: {
@@ -106,6 +109,7 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
         maxWidth: '90%',
+        overflow: 'hidden',
     },  
     picker: {
         display: 'flex',

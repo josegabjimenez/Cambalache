@@ -8,27 +8,10 @@ import Colors from '../res/Colors';
 const ModalPicker = (props) => {
 
     const categories = [
-        "Televisores",
-        "Computadores",
-        "Carros",
-        "Mobiliaria",
-        "Televisores",
-        "Computadores",
-        "Carros",
-        "Mobiliaria",
-        "Televisores",
-        "Computadores",
-        "Carros",
-        "Mobiliaria",
-        "Televisores",
-        "Computadores",
-        "Carros",
-        "Mobiliaria",
-        "Televisores",
-        "Computadores",
-        "Carros",
-        "Mobiliaria",
-        "Perreo hijueputaaaaaaaaaaaaaaaaaaaaasajoapijsdflakñnfdañsljfhñalskmndfñihgpaoñijoiñejafsiñjdaspoijh"
+        {category: "Televisores", key:1},
+        {category: "Computadores", key:2},
+        {category: "Carros", key:3},
+        {category: "Mobiliaria", key:4},
     ]
 
     const onPressItem = (item) => {
@@ -40,11 +23,11 @@ const ModalPicker = (props) => {
         <TouchableOpacity style={styles.container} onPress={props.onPress}>
             <View style={styles.modalPicker}>
                 <FlatList
-                    key={(item) => item} 
+                    key={(item) => item.key} 
                     data={categories}
                     renderItem={({item}) => (
-                        <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={() => onPressItem(item)}>
-                            <CustomText style={styles.itemText} type="bold">{item}</CustomText>
+                        <TouchableOpacity style={styles.itemContainer} onPress={() => onPressItem(item)}>
+                            <CustomText style={styles.itemText} type="bold">{item.category}</CustomText>
                         </TouchableOpacity>
                     )}
 
