@@ -1,17 +1,26 @@
-
+import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import AuthMethodScreen from './src/screens/Auth/AuthMethodScreen';
 import LogInScreen from './src/screens/Auth/LogInScreen';
 import SignUpScreen from './src/screens/Auth/SignUpScreen';
-import HomeScreen from './src/screens/Home/HomeScreen';
-import DetailScreen from './src/screens/Home/DetailScreen';
+import HomeStack from './src/screens/Home/HomeStack';
 import AdPostScreen from './src/screens/Post/AdPostScreen';
+import ProfileScreen from './src/screens/Profile/ProfileScreen';
 import LoadingScreen from './src/screens/LoadingScreen';
 
 //Fonts
 import * as Font from 'expo-font';
+
+//Icons
+import Icon from 'react-native-vector-icons/Ionicons';
+
+//Colors
+import Colors from './src/res/Colors';
+
+//Firebase
+import firebase from './src/database/firebase';
 
 //Navigation
 import { NavigationContainer } from '@react-navigation/native';
@@ -21,9 +30,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
+const SCREEN_WIDTH = Dimensions.get('window').width;
+
 const AuthNavigator = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{
+      title: "",
+      headerTransparent: true,
+    }}>
       <Stack.Screen name="authMethod" component={AuthMethodScreen} />
       <Stack.Screen name="emailLogIn" component={LogInScreen} /> 
       <Stack.Screen name="emailSignUp" component={SignUpScreen} /> 
@@ -33,9 +47,41 @@ const AuthNavigator = () => {
 
 const TabNavigator = () => {
   return (
-    <Tab.Navigator>
-      <Tab.Screen name="home" component={HomeScreen} />
-      <Tab.Screen name="adPost" component={AdPostScreen} />
+    <Tab.Navigator 
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, size, color, padding}) => {
+          let iconName;
+
+          if (route.name === "Inicio"){
+            iconName = focused ? "home-sharp" : "home-outline"
+          } else if (route.name === "Publicar"){
+            iconName = focused ? "add-circle-sharp" : "add-circle-outline"
+          } else if (route.name === "Perfil"){
+            iconName = focused ? "person-sharp" : "person-outline"
+          }
+
+          return <Icon name={iconName} size={size} color={color} style={{paddingBottom: padding}} />
+
+        }
+      })}
+      tabBarOptions={{
+        activeTintColor: Colors.dark,
+        inactiveTintColor: 'grey',
+        labelStyle: {
+          fontSize: 12,
+          fontWeight: 'bold',
+        },
+        style: {
+          backgroundColor: Colors.emerald,
+          borderTopWidth: 2,
+          borderTopColor: Colors.dark,
+          width: SCREEN_WIDTH,
+        }
+      }}
+    >
+      <Tab.Screen name="Inicio" component={HomeStack} />
+      <Tab.Screen name="Publicar" component={AdPostScreen} />
+      <Tab.Screen name="Perfil" component={ProfileScreen} />
     </Tab.Navigator>
   )
 }
@@ -43,7 +89,7 @@ const TabNavigator = () => {
 export default function App() {
 
   const [loading, setLoading] = useState(true);
-  const [isAuth, setIsAuth] = useState(true);
+  const [isAuth, setIsAuth] = useState(false);
 
   const getFonts = async () => {
       await Font.loadAsync({
@@ -56,8 +102,22 @@ export default function App() {
       setLoading(false);
   }
 
+  const trackAuthStatus = () => {
+    firebase.auth.onAuthStateChanged(user => {
+      if(user){
+        setIsAuth(true);
+        // console.log("User logged in: ", user);
+      } else {
+        setIsAuth(false);
+        // console.log("User logged out.");
+      }
+    })
+  
+  }
+
   useEffect(() => {
       getFonts();
+      trackAuthStatus();
   },[]);
 
   return (
@@ -66,15 +126,7 @@ export default function App() {
       {loading ? (
         <LoadingScreen />
       ) : (
-        // <AuthMethodScreen/>
-        // <LogInScreen />
-        // <SignUpScreen />
-        // <AdPostScreen />
-        // <HomeScreen />
-        // <DetailScreen />
-
-        isAuth ? (<TabNavigator />) : (<AuthNavigator/>)
-
+        isAuth ? <TabNavigator /> : <AuthNavigator/>
       )}
         
     </NavigationContainer>

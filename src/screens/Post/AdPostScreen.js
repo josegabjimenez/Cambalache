@@ -1,27 +1,82 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Modal, ScrollView, Dimensions, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Modal, ScrollView, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import CustomText from '../../components/CustomText';
 import Input from '../../components/Input';
 import ModalPicker from '../../components/ModalPicker';
-
 import Icon from 'react-native-vector-icons/AntDesign';
 import Button from '../../components/Button';
+
+//Firebase
+import firebase from '../../database/firebase';
 
 //Colors
 import Colors from '../../res/Colors';
 
-const AdPostScreen = () => {
+const AdPostScreen = (props) => {
 
-    const [category, setCategory] = useState("Seleccionar...");
+    const [state, setState] = useState({
+        title: "",
+        description: "",
+        img: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8dCUyMHNoaXJ0fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+        category: "Seleccionar...",
+        contact: "",
+        uid: firebase.auth.currentUser.uid,
+    })
     const [isModalActive, setIsModalActive] = useState(false);
+    const [isButtonDisabled, setisButtonDisabled] = useState(true);
+
+    const resetState = () => {
+        setState({
+            title: "",
+            description: "",
+            img: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8dCUyMHNoaXJ0fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+            category: "Seleccionar...",
+            contact: "",
+            uid: firebase.auth.currentUser.uid,
+        });
+    }
 
     const toggleModal = () => {
         setIsModalActive(!isModalActive);
     }
 
-    const setData = (item) => {
-        setCategory(item.category)
+    const setCategoryData = (item) => {
+        setState({...state, category: item.category})
     }
+
+    const setData = (field, value) => {
+        setState({...state, [field]:value });
+    }
+
+    const postData = async () => {
+
+        try {
+            await firebase.db.collection("ads").add(state);
+            Alert.alert("Tu anuncio se ha publicado con exito!");
+            props.navigation.navigate("Perfil");
+        } catch (err) {
+            Alert.alert("Oops, algo ha salido mal...\n" + err);
+        }
+        // console.log(state);
+    }
+
+    useEffect(() => {
+        if(state.title == "" || state.description == "" || state.img == "" || state.category =="Seleccionar..." || state.contact == ""){
+            setisButtonDisabled(true);
+        } else {
+            setisButtonDisabled(false);
+        }
+    }, [state]);
+
+    useEffect(() => {
+
+        props.navigation.addListener("focus", () => resetState());
+
+        return () => {
+            props.navigation.removeListener("focus", () => resetState());
+        }
+
+    }, [props.navigation]);
 
     return (
         <View style={styles.container}>
@@ -29,9 +84,19 @@ const AdPostScreen = () => {
             <CustomText style={styles.title} type="bold">Publicar artículo</CustomText>
 
             <View style={styles.fieldsContainer}>
-                <Input title="Título" type="emerald">Ingrese el título...</Input>
-                <Input title="Descripción" description={true} multiline={true} numerOfLines={4} type="emerald">Ingrese la descripción...</Input>
-                <Input title="Número de contacto (+57)" type="emerald">Ingrese su número de teléfono...</Input>
+                <Input title="Título" type="emerald" value={state.title} onChange={query => setData("title", query)}>Ingrese el título...</Input>
+                <Input 
+                    title="Descripción" 
+                    description={true} 
+                    multiline={true} 
+                    numerOfLines={4} 
+                    type="emerald" 
+                    value={state.description} 
+                    onChange={query => setData("description",query)}
+                >
+                    Ingrese la descripción...
+                </Input>
+                <Input title="Número de contacto (+57)" type="emerald" value={state.contact} onChange={query => setData("contact",query)}>Ingrese su número de teléfono...</Input>
 
                 <View style={styles.pickerGroup}>
                     <View style={styles.pickerTitle}>
@@ -40,7 +105,7 @@ const AdPostScreen = () => {
 
                     <TouchableOpacity style={styles.picker} onPress={toggleModal}>
                         <View style={styles.row}>
-                            <CustomText style={{height: 18}} type="regular">{category}</CustomText> 
+                            <CustomText style={{height: 18}} type="regular">{state.category}</CustomText> 
                         </View>
                         <View style={styles.row}>
                             <Icon name="downcircle" style={styles.icon}/>
@@ -49,8 +114,12 @@ const AdPostScreen = () => {
 
                 </View>
 
-                <Button style={styles.button} type="light">Subir foto</Button>
-                <Button style={styles.button} type="dark">Publicar</Button>
+                <View style={{width: "100%", alignItems: 'center', marginBottom: 25}}>
+                    <Button style={styles.button} type="light">Subir foto</Button>
+                    <Button style={styles.button} type="dark" onPress={postData} disabled={isButtonDisabled}>Publicar</Button>
+
+                    { isButtonDisabled && <CustomText type="italic" style={styles.disabledText}>Debes llenar todos los campos para poder publicar tu artículo.</CustomText> }
+                </View>
 
             </View>
             </ScrollView>
@@ -64,7 +133,7 @@ const AdPostScreen = () => {
 
                 <ModalPicker 
                     onPress={() => toggleModal()}
-                    setData={setData}
+                    setData={setCategoryData}
                 />
 
             </Modal>
@@ -82,7 +151,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.light,
     },
     title: {
-        marginTop: 20,
+        marginTop: 50,
         alignSelf: 'center',
         fontSize: 24,
         shadowColor: "#000",
@@ -137,5 +206,11 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 25,
+        marginBottom: 15,
+    },
+    disabledText: {
+        width: '85%',
+        fontSize: 12,
+        textAlign: 'center',
     }
 })

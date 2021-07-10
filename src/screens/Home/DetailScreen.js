@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, View, Image, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Image, Dimensions, ScrollView, Linking, Platform } from 'react-native';
 import CustomText from '../../components/CustomText';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Button from '../../components/Button';
@@ -9,57 +9,64 @@ import Colors from '../../res/Colors';
 
 const IMAGE_HEIGHT = (Dimensions.get('window').height) * 0.31;
 
-const DetailScreen = (props) => {
+const DetailScreen = (item) => {
 
-    const product = [
-        {
-            id: '1',
-            title: "Camiseta",
-            description: "Camiseta de color negro en buen estadoooooooooooooooooooooooooooooooooooooaaaaaaaaaaaaaaaaaaaaaaaaaaaadfasdfasdfasdfasdfoooooooooo",
-            img: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8dCUyMHNoaXJ0fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-            category: "Ropa",
-            contact: "3176829955",  
-        },
-    ];
+    const [state, setState] = useState({});
 
+    //Set to the state all the item params.
+    const getData = () => {
+        setState(item.route.params);
+    }
+
+    //Open phone to call
+    const phoneCall = () => {
+        if(Platform.OS == "android"){
+            Linking.openURL(`tel:${state.contact}`);
+        } else {
+            Linking.openURL(`telprompt:${state.contact}`);
+        }
+    }
+
+    useEffect(() => {
+        getData();
+    }, []);
 
     return (
-        <View style={styles.container}>
+        <ScrollView>
+            <View style={styles.container}>
 
-            <View style={styles.imageContainer}>
-                <Image 
-                    style={styles.image}
-                    source={{uri: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8dCUyMHNoaXJ0fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"}}
-                    resizeMode="cover"
-                />
+                <View style={styles.imageContainer}>
+                    <Image 
+                        style={styles.image}
+                        source={{uri: state.img}}
+                        resizeMode="cover"
+                    />
+                </View>
+
+                <View style={styles.infoContainer}>
+                    <CustomText type="bold" style={styles.title}>{state.title}</CustomText>
+
+                    <View style={styles.section}>
+                        <CustomText type="bold" style={styles.subTitle}>Descripción: </CustomText>
+                        <CustomText type="regular" style={styles.text}>{state.description}</CustomText>
+                    </View>
+
+                    <View style={styles.sectionRow}>
+                        <CustomText type="bold" style={styles.subTitle}>Categoría: </CustomText>
+                        <CustomText type="regular" style={styles.text}>{state.category}</CustomText>
+                    </View>
+
+                    <View style={styles.sectionRow}>
+                        <CustomText type="bold" style={styles.subTitle}>Contacto: </CustomText>
+                        <CustomText type="regular" style={styles.text}>+57 {state.contact} </CustomText>
+                        <Icon name="phone" style={{fontSize: 14, alignSelf: 'center'}}/>
+                    </View>
+
+                </View>
+
+                <Button type="dark" style={{marginTop: 25, marginBottom: 25,}} onPress={phoneCall} >Llamar</Button>
             </View>
-
-            <View style={styles.infoContainer}>
-                <CustomText type="bold" style={styles.title}>Camiseta</CustomText>
-
-                <View style={styles.section}>
-                    <CustomText type="bold" style={styles.subTitle}>Descripción: </CustomText>
-                    <CustomText type="regular" style={styles.text}>Camiseta de color negro en buen estadoooooooooooooooooooooooooooooooooooooaaaaaaaaaaaaaaaaaaaaaaaaaaaadfasdfasdfasdfasdfoooooooooo</CustomText>
-                </View>
-
-                <View style={styles.sectionRow}>
-                    <CustomText type="bold" style={styles.subTitle}>Categoría: </CustomText>
-                    <CustomText type="regular" style={styles.text}>Televisores</CustomText>
-                </View>
-
-                <View style={styles.sectionRow}>
-                    <CustomText type="bold" style={styles.subTitle}>Contacto: </CustomText>
-                    <CustomText type="regular" style={styles.text}>+57 3176829955 </CustomText>
-                    <Icon name="phone" style={{fontSize: 14, alignSelf: 'center'}}/>
-                </View>
-
-            </View>
-
-
-            <Button type="dark" style={{marginTop: 25}}>Llamar</Button>
-
-
-        </View>
+        </ScrollView>
     )
 }
 
@@ -69,7 +76,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         width: '100%',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     imageContainer: {
         alignItems: 'center',
@@ -89,7 +96,6 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
-        elevation: 15,
     },
     infoContainer: {
         width: '85%',

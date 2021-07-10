@@ -7,7 +7,12 @@ import CustomText from '../../components/CustomText';
 //Colors
 import Colors from '../../res/Colors';
 
-const AuthMethodScreen = () => {
+const AuthMethodScreen = (props) => {
+
+    const handleNavigation = () => {
+        props.navigation.navigate("emailLogIn");
+    }
+
     return (
         <LinearGradient
             style={styles.container}
@@ -23,7 +28,7 @@ const AuthMethodScreen = () => {
                     <CustomText style={styles.textLink} type="bold">Continuar con Google</CustomText>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={handleNavigation}>
                     <MaterialCommunityIcon name="email-outline" style={styles.iconLink} />
                     <CustomText style={styles.textLink} type="bold">Continuar con Email</CustomText>
                 </TouchableOpacity>

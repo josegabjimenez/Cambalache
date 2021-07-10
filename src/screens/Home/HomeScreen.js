@@ -1,41 +1,49 @@
-import React from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, FlatList, Alert, ActivityIndicator} from 'react-native';
 import CustomText from '../../components/CustomText';
 import Searcher from '../../components/Searcher';
 import Card from '../../components/Card';
 
+//Firebase
+import firebase from '../../database/firebase';
+
 //Colors
 import Colors from '../../res/Colors';
 
-const HomeScreen = () => {
+const HomeScreen = (props) => {
 
-    const products = [
-        {
-            id: '1',
-            title: "Camiseta",
-            description: "Camiseta de color negro en buen estadoooooooooooooooooooooooooooooooooooooaaaaaaaaaaaaaaaaaaaaaaaaaaaadfasdfasdfasdfasdfoooooooooo",
-            img: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8dCUyMHNoaXJ0fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-            category: "Ropa",
-            contact: "3176829955",  
-        },
-        {
-            id: '2',
-            title: "Iphone 12",
-            description: "Camiseta de color negro en buen estado",
-            img: "https://images.unsplash.com/photo-1609692814857-d0eaed5a148c?ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8aXBob25lJTIwMTJ8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-            category: "Ropa",
-            contact: "3176829955",  
-        },
-        {
-            id: '3',
-            title: "Moto",
-            description: "Camiseta de color negro en buen estado",
-            img: "https://images.unsplash.com/photo-1515777315835-281b94c9589f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8bW90b3JiaWtlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-            category: "Ropa",
-            contact: "3176829955",  
-        },
-        
-    ];
+    const [ads, setAds] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    //Make a get petition to firestore of all the ads published.
+    const getAds = async () => {
+        try {
+            setLoading(true);
+            const res = await firebase.db.collection("ads").get(); //Response of firestore
+            const result = res.docs.map(docSnap => docSnap.data()); //Convert all the docs to data
+            setAds(result);
+            setLoading(false);
+            // console.log(result);
+
+        } catch (err) {
+            Alert.alert("Oops, algo ha salido mal...\n" + err);
+        }
+    }
+
+    //Navigates to the detail screen.
+    const handleNavigation = (item) => {
+        props.navigation.navigate("Detalles", item);
+    }
+
+    useEffect(() => {
+
+        props.navigation.addListener("focus", () => getAds());
+
+        return () => {
+            navigation.removeListener("focus", () => getAds());
+        }
+
+    },[props.navigation]);
 
     return (
         <View style={styles.container}>
@@ -46,15 +54,17 @@ const HomeScreen = () => {
             </View>
 
             <View style={styles.listContainer}>
+                { loading && <ActivityIndicator size="large" color={Colors.dark} /> }
                 <FlatList 
-                    keyExtractor={(item) => item.id}
-                    data={products}
+                    keyExtractor={(item) => item.uid}
+                    data={ads}
                     numColumns={2}
                     renderItem={({item}) => (
                         <Card 
                             title={item.title}
                             description={item.description}
                             img={item.img}
+                            onPress={() => handleNavigation(item)}
                         />
                     )}
                 /> 
@@ -80,6 +90,5 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         alignItems: 'center',
-        //backgroundColor: 'blue',
     },
 })

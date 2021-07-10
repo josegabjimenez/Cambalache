@@ -1,29 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomText from '../../components/CustomText';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 
+//Firebase
+import firebase from '../../database/firebase';
+
 //Colors
 import Colors from '../../res/Colors';
 
-const SignUpScreen = () => {
+const SignUpScreen = (props) => {
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const handleNavigation = () => {
+        props.navigation.goBack();
+    }
+
+    const SignUp = async () => {
+        if(email == "" || password == ""){
+            Alert.alert("Por favor rellene todos los campos.")
+        } else {
+            try {
+                await firebase.auth.createUserWithEmailAndPassword(email,password);
+                //console.log(res);
+            } catch (err) {
+                Alert.alert("Oops, algo ha salido mal...\n" + err);
+            }
+        }
+    }
 
     useEffect(() => {
         setEmail("");
         setPassword("");
     }, []);
 
-    useEffect(() => {
-        console.log("Email: " + email);
-        console.log("Password: " + password);
-    },[email, password]);
+    // useEffect(() => {
+    //     console.log("Email: " + email);
+    //     console.log("Password: " + password);
+    // },[email, password]);
 
 
     return (
@@ -44,8 +64,8 @@ const SignUpScreen = () => {
             <Input type="dark" title="Contraseña" secure={true} value={password} onChange={query => setPassword(query)}>Ingrese su contraseña aquí...</Input>
 
             <View style={styles.submitSection}>
-                <Button type="dark">Registrarse</Button>
-                <TouchableOpacity style={styles.textHelp} >
+                <Button type="dark" onPress={SignUp}>Registrarse</Button>
+                <TouchableOpacity style={styles.textHelp} onPress={handleNavigation}>
                     <CustomText type="italic" >
                         ¿Ya tienes una cuenta? Inicia sesión
                     </CustomText>

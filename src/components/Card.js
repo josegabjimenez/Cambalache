@@ -8,11 +8,11 @@ import Colors from '../res/Colors';
 const CARD_WIDTH = (Dimensions.get('window').width) * 0.40;
 const CARD_HEIGHT = (Dimensions.get('window').height) * 0.26;
 const IMAGE_HEIGHT = (Dimensions.get('window').height) * 0.15;
-const DESCRIPTION_HEIGHT = CARD_HEIGHT - IMAGE_HEIGHT - 25;
+const DESCRIPTION_HEIGHT = (CARD_HEIGHT - IMAGE_HEIGHT) * 0.65;
 
 const Card = (props) => {
     return (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={props.onPress}>
             <View style={styles.container}>
                 <View style={styles.imageContainer}>
                     <Image
@@ -52,14 +52,11 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
-        elevation: 15,
     },
     imageContainer: {
         width: '100%',
         height: IMAGE_HEIGHT,
         backgroundColor: Colors.greenDark,
-        // borderWidth: 1,
-        // borderColor: Colors.dark,
         borderRadius: 15,
         shadowColor: "#000",
         shadowOffset: {
@@ -68,7 +65,6 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
-        elevation: 15,
     },
     image: {
         width: '100%',
@@ -82,13 +78,13 @@ const styles = StyleSheet.create({
         height: 18,
         alignSelf: 'center',
         overflow: 'hidden',
-        marginTop: 5,
+        marginTop: 3,
     },
     descriptionContainer: {
         width: '90%',
         height: DESCRIPTION_HEIGHT,
         alignSelf: 'center',
         overflow: 'hidden',
-        marginTop: 5,
+        marginTop: 2,
     }
 })

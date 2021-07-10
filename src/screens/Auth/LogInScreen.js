@@ -1,17 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import CustomText from '../../components/CustomText';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 
+//Firebase
+import firebase from '../../database/firebase';
+
 //Colors
 import Colors from '../../res/Colors';
 
-const LogInScreen = () => {
+const LogInScreen = (props) => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const handleNavigation = () => {
+        props.navigation.navigate("emailSignUp");
+    }
+
+    const LogIn = async () => {
+        if(email == "" || password == ""){
+            Alert.alert("Por favor rellene todos los campos.");
+        } else {
+            try {
+                await firebase.auth.signInWithEmailAndPassword(email, password);
+                // console.log(res.user);
+            } catch (err) {
+                Alert.alert("Oops, algo ha salido mal...\n" + err);
+            }
+        }
+    }
 
     useEffect(() => {
         setEmail("");
@@ -41,8 +61,8 @@ const LogInScreen = () => {
             <Input type="dark" title="Contraseña" secure={true} value={password} onChange={query => setPassword(query)}>Ingrese su contraseña aquí...</Input>
 
             <View style={styles.submitSection}>
-                <Button type="dark">Iniciar sesión</Button>
-                <TouchableOpacity style={styles.textHelp} >
+                <Button type="dark" onPress={LogIn}>Iniciar sesión</Button>
+                <TouchableOpacity style={styles.textHelp} onPress={handleNavigation}>
                     <CustomText type="italic" >
                         ¿No tienes cuenta? Regístrate
                     </CustomText>
