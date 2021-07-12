@@ -13,6 +13,8 @@ const HomeStack = () => {
     return (
         <Stack.Navigator 
         screenOptions={{
+            headerBackTitleVisible: false,
+            headerTintColor: Colors.dark,
             headerStyle: {
                 elevation: 0,
                 shadowOpacity: 0,

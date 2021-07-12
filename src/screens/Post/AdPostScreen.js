@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Modal, ScrollView, Dimensions, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, Modal, ScrollView, Dimensions, TouchableOpacity, Alert, TouchableWithoutFeedback } from 'react-native';
 import CustomText from '../../components/CustomText';
 import Input from '../../components/Input';
 import ModalPicker from '../../components/ModalPicker';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Button from '../../components/Button';
+import ImagePickerModal from '../../components/ImagePickerModal';
+import * as ImagePicker from 'expo-image-picker';
 
 //Firebase
 import firebase from '../../database/firebase';
@@ -23,6 +25,7 @@ const AdPostScreen = (props) => {
         uid: firebase.auth.currentUser.uid,
     })
     const [isModalActive, setIsModalActive] = useState(false);
+    const [isImagePickerActive, setisImagePickerActive] = useState(false);
     const [isButtonDisabled, setisButtonDisabled] = useState(true);
 
     const resetState = () => {
@@ -46,6 +49,30 @@ const AdPostScreen = (props) => {
 
     const setData = (field, value) => {
         setState({...state, [field]:value });
+    }
+
+    const pickImageFromGallery = async () => {
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 0.5,
+        });
+
+        console.log(result);
+
+    }
+
+    const takePhotoFromCamera = async () => {
+        await ImagePicker.requestCameraPermissionsAsync();
+        let result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 0.5,
+        });
+
+        console.log(result);
+
     }
 
     const postData = async () => {
@@ -79,6 +106,7 @@ const AdPostScreen = (props) => {
     }, [props.navigation]);
 
     return (
+        
         <View style={styles.container}>
             <ScrollView>
             <CustomText style={styles.title} type="bold">Publicar artículo</CustomText>
@@ -115,7 +143,7 @@ const AdPostScreen = (props) => {
                 </View>
 
                 <View style={{width: "100%", alignItems: 'center', marginBottom: 25}}>
-                    <Button style={styles.button} type="light">Subir foto</Button>
+                    <Button style={styles.button} type="light" onPress={() => setisImagePickerActive(true)}>Subir foto</Button>
                     <Button style={styles.button} type="dark" onPress={postData} disabled={isButtonDisabled}>Publicar</Button>
 
                     { isButtonDisabled && <CustomText type="italic" style={styles.disabledText}>Debes llenar todos los campos para poder publicar tu artículo.</CustomText> }
@@ -138,6 +166,13 @@ const AdPostScreen = (props) => {
 
             </Modal>
 
+            <ImagePickerModal 
+                isActive={isImagePickerActive} 
+                close={() => setisImagePickerActive(false)} 
+                pickImage={pickImageFromGallery}
+                takePhoto={takePhotoFromCamera}
+            />
+
         </View>
     )
 }
@@ -145,6 +180,13 @@ const AdPostScreen = (props) => {
 export default AdPostScreen
 
 const styles = StyleSheet.create({
+    backgroundImagePicker: {
+        flex: 1,
+        width: '100%',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },  
     container: {
         flex: 1,
         width: Dimensions.get('window').width,

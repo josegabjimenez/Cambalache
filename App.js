@@ -37,6 +37,8 @@ const AuthNavigator = () => {
     <Stack.Navigator screenOptions={{
       title: "",
       headerTransparent: true,
+      headerBackTitleVisible: false,
+      headerTintColor: Colors.dark,
     }}>
       <Stack.Screen name="authMethod" component={AuthMethodScreen} />
       <Stack.Screen name="emailLogIn" component={LogInScreen} /> 
