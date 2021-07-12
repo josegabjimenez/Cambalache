@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Modal, ScrollView, Dimensions, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, Modal, ScrollView, Dimensions, TouchableOpacity, Alert, Image } from 'react-native';
 import CustomText from '../../components/CustomText';
 import Input from '../../components/Input';
 import ModalPicker from '../../components/ModalPicker';
@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import Button from '../../components/Button';
 import ImagePickerModal from '../../components/ImagePickerModal';
 import * as ImagePicker from 'expo-image-picker';
+import LoadingScreen from '../LoadingScreen';
 
 //Firebase
 import firebase from '../../database/firebase';
@@ -19,7 +20,7 @@ const AdPostScreen = (props) => {
     const [state, setState] = useState({
         title: "",
         description: "",
-        img: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8dCUyMHNoaXJ0fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+        img: "",
         category: "Seleccionar...",
         contact: "",
         uid: firebase.auth.currentUser.uid,
@@ -27,12 +28,13 @@ const AdPostScreen = (props) => {
     const [isModalActive, setIsModalActive] = useState(false);
     const [isImagePickerActive, setisImagePickerActive] = useState(false);
     const [isButtonDisabled, setisButtonDisabled] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const resetState = () => {
         setState({
             title: "",
             description: "",
-            img: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8dCUyMHNoaXJ0fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+            img: "",
             category: "Seleccionar...",
             contact: "",
             uid: firebase.auth.currentUser.uid,
@@ -59,28 +61,10 @@ const AdPostScreen = (props) => {
             quality: 0.5,
         });
 
-        const taskUpload = firebase.store.ref().child(`/items/${Date.now()}`).putFile(result.uri);
-
-        taskUpload.on('state_changed', (snapshot) => {
-
-            //Observe the state of the image uploading
-            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            
-            if(progress >= 100){
-                Alert.alert("La imagen se ha subido correctamente.");
-            }
-
-        }, (err) => {
-            //Handle possible error
-            Alert.alert("Oops, algo ha salido mal..." + err);
-        }, () => {
-            //Set the image download url
-            const downloadUrl = taskUpload.snapshot.ref.getDownloadURL();
-            console.log(downloadUrl);
-        });
-
-        console.log(result);
-
+        if(!result.cancelled){
+            setState({...state, img: result.uri});
+            setisImagePickerActive(false);
+        }
     }
 
     const takePhotoFromCamera = async () => {
@@ -91,20 +75,36 @@ const AdPostScreen = (props) => {
             quality: 0.5,
         });
 
-        console.log(result);
-
+        if(!result.cancelled){
+            setState({...state, img: result.uri});
+            setisImagePickerActive(false);
+        }
     }
 
     const postData = async () => {
-
         try {
+            setLoading(true);
+            const response = await fetch(state.img);
+            const blob = await response.blob();
+            const taskUpload = firebase.store.ref().child(`/items/${Date.now()}.jpg`).put(blob);
+
+            taskUpload.on('state_changed', (snapshot) => {}, (err) => {
+                //Handle possible error
+                Alert.alert("Oops, algo ha salido mal..." + err);
+            }, async () => {
+                //Set the image download url
+                const downloadUrl = await taskUpload.snapshot.ref.getDownloadURL();
+                await setState({...state, img: downloadUrl});
+                setisImagePickerActive(false);
+                setLoading(false);
+            });
+            
             await firebase.db.collection("ads").add(state);
             Alert.alert("Tu anuncio se ha publicado con exito!");
             props.navigation.navigate("Perfil");
         } catch (err) {
             Alert.alert("Oops, algo ha salido mal...\n" + err);
         }
-        // console.log(state);
     }
 
     useEffect(() => {
@@ -124,6 +124,10 @@ const AdPostScreen = (props) => {
         }
 
     }, [props.navigation]);
+
+    if(loading){
+        return <LoadingScreen />
+    }
 
     return (
         
@@ -163,6 +167,8 @@ const AdPostScreen = (props) => {
                 </View>
 
                 <View style={{width: "100%", alignItems: 'center', marginBottom: 25}}>
+                    { state.img != "" && <Image style={styles.imagePreview} source={{uri: state.img}}/> }
+
                     <Button style={styles.button} type="light" onPress={() => setisImagePickerActive(true)}>Subir foto</Button>
                     <Button style={styles.button} type="dark" onPress={postData} disabled={isButtonDisabled}>Publicar</Button>
 
@@ -265,6 +271,15 @@ const styles = StyleSheet.create({
     },
     icon: {
         fontSize: 20,
+    },
+    imagePreview: {
+        width: '85%',
+        height: Dimensions.get('window').height * 0.3,
+        borderRadius: 15,
+        borderWidth: 2,
+        borderColor: Colors.dark,
+        marginTop: 25,
+        marginBottom: 15,
     },
     button: {
         marginTop: 25,
