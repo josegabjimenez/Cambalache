@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Modal, ScrollView, Dimensions, TouchableOpacity, Alert, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, Modal, ScrollView, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import CustomText from '../../components/CustomText';
 import Input from '../../components/Input';
 import ModalPicker from '../../components/ModalPicker';
@@ -57,6 +57,26 @@ const AdPostScreen = (props) => {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             quality: 0.5,
+        });
+
+        const taskUpload = firebase.store.ref().child(`/items/${Date.now()}`).putFile(result.uri);
+
+        taskUpload.on('state_changed', (snapshot) => {
+
+            //Observe the state of the image uploading
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            
+            if(progress >= 100){
+                Alert.alert("La imagen se ha subido correctamente.");
+            }
+
+        }, (err) => {
+            //Handle possible error
+            Alert.alert("Oops, algo ha salido mal..." + err);
+        }, () => {
+            //Set the image download url
+            const downloadUrl = taskUpload.snapshot.ref.getDownloadURL();
+            console.log(downloadUrl);
         });
 
         console.log(result);
