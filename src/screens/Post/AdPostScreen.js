@@ -21,6 +21,8 @@ const AdPostScreen = (props) => {
         title: "",
         description: "",
         img: "",
+        imgLocation: "",
+        imgRef: "",
         category: "Seleccionar...",
         contact: "",
         uid: firebase.auth.currentUser.uid,
@@ -35,6 +37,8 @@ const AdPostScreen = (props) => {
             title: "",
             description: "",
             img: "",
+            imgLocation: "",
+            imgRef: "",
             category: "Seleccionar...",
             contact: "",
             uid: firebase.auth.currentUser.uid,
@@ -54,6 +58,7 @@ const AdPostScreen = (props) => {
     }
 
     const pickImageFromGallery = async () => {
+        //Request for permissions and open the library to choose an image
         await ImagePicker.requestMediaLibraryPermissionsAsync();
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -61,13 +66,15 @@ const AdPostScreen = (props) => {
             quality: 0.5,
         });
 
+        //If an image is selected, the image uri is set to the state 
         if(!result.cancelled){
-            setState({...state, img: result.uri});
+            setState({...state, imgLocation: result.uri});
             setisImagePickerActive(false);
         }
     }
 
     const takePhotoFromCamera = async () => {
+        //Request for permissions and open the camera to take a photo
         await ImagePicker.requestCameraPermissionsAsync();
         let result = await ImagePicker.launchCameraAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -75,31 +82,38 @@ const AdPostScreen = (props) => {
             quality: 0.5,
         });
 
+        //If the photo is not cancelled, the photo uri is set to the state
         if(!result.cancelled){
-            setState({...state, img: result.uri});
             setisImagePickerActive(false);
+            setState({...state, imgLocation: result.uri});
         }
+    }
+
+    const uploadImage = async () => {
+        setLoading(true);
+        //Upload the image to firebase storage
+        const imageName = Date.now();
+        const response = await fetch(state.imgLocation);
+        const blob = await response.blob();
+        const taskUpload = firebase.store.ref().child(`/items/${imageName}.jpg`).put(blob);
+
+        taskUpload.on('state_changed', (snapshot) => {}, (err) => {
+            //Handle possible error
+            Alert.alert("Oops, algo ha salido mal..." + err);
+        }, async () => {
+            //Set image download url to the state
+            const downloadUrl = await taskUpload.snapshot.ref.getDownloadURL();
+            setState({...state, img: downloadUrl, imgRef: imageName});
+        });
     }
 
     const postData = async () => {
         try {
-            setLoading(true);
-            const response = await fetch(state.img);
-            const blob = await response.blob();
-            const taskUpload = firebase.store.ref().child(`/items/${Date.now()}.jpg`).put(blob);
-
-            taskUpload.on('state_changed', (snapshot) => {}, (err) => {
-                //Handle possible error
-                Alert.alert("Oops, algo ha salido mal..." + err);
-            }, async () => {
-                //Set the image download url
-                const downloadUrl = await taskUpload.snapshot.ref.getDownloadURL();
-                await setState({...state, img: downloadUrl});
-                setisImagePickerActive(false);
-                setLoading(false);
-            });
-            
+            //Post the current ad state to firebase storage
+            console.log("------------- Se ha posteado esto: ");
+            console.log(state);
             await firebase.db.collection("ads").add(state);
+            setLoading(false);
             Alert.alert("Tu anuncio se ha publicado con exito!");
             props.navigation.navigate("Perfil");
         } catch (err) {
@@ -107,22 +121,29 @@ const AdPostScreen = (props) => {
         }
     }
 
+    //This useEffect calls the post data function when the image donwload url is set up to the state
     useEffect(() => {
-        if(state.title == "" || state.description == "" || state.img == "" || state.category =="Seleccionar..." || state.contact == ""){
+        if(state.img != ""){
+            postData();
+        }
+    }, [state.img]);
+
+    //This useEffect allow you to know if all the fields were filled or not
+    useEffect(() => {
+        if(state.title == "" || state.description == "" || state.imgLocation == "" || state.category =="Seleccionar..." || state.contact == ""){
             setisButtonDisabled(true);
         } else {
             setisButtonDisabled(false);
         }
     }, [state]);
 
+    //This useEffects restart all the fields when the focus is no longer on this screen
     useEffect(() => {
-
         props.navigation.addListener("focus", () => resetState());
 
         return () => {
             props.navigation.removeListener("focus", () => resetState());
         }
-
     }, [props.navigation]);
 
     if(loading){
@@ -167,10 +188,31 @@ const AdPostScreen = (props) => {
                 </View>
 
                 <View style={{width: "100%", alignItems: 'center', marginBottom: 25}}>
-                    { state.img != "" && <Image style={styles.imagePreview} source={{uri: state.img}}/> }
+                    { state.imgLocation != "" && <Image style={styles.imagePreview} source={{uri: state.imgLocation}}/> }
 
-                    <Button style={styles.button} type="light" onPress={() => setisImagePickerActive(true)}>Subir foto</Button>
-                    <Button style={styles.button} type="dark" onPress={postData} disabled={isButtonDisabled}>Publicar</Button>
+                    <Button 
+                        style={styles.button} 
+                        type="light" 
+                        onPress={() => setisImagePickerActive(true)}
+                    >
+                        Subir foto
+                    </Button>
+                    <Button 
+                        style={styles.button} 
+                        type="dark" 
+                        onPress={() => uploadImage()} 
+                        disabled={isButtonDisabled}
+                    >
+                        Publicar
+                    </Button>
+
+                    <Button 
+                        style={styles.button} 
+                        type="emerald" 
+                        onPress={() => console.log(state)} 
+                    >
+                        Log
+                    </Button>
 
                     { isButtonDisabled && <CustomText type="italic" style={styles.disabledText}>Debes llenar todos los campos para poder publicar tu artículo.</CustomText> }
                 </View>

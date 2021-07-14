@@ -21,8 +21,11 @@ const ImagePickerModal = (props) => {
                 onRequestClose={() => props.close()}
             >
                 <View style={styles.container}>
-                    <TouchableOpacity style={styles.icon} onPress={() => props.close()}>
-                        <Icon name="close-circle" style={styles.icon}/>
+                    <TouchableOpacity style={styles.iconContainer} onPress={() => props.close()}>
+                        <View>
+                            <Icon name="close-circle" style={styles.icon}/>
+
+                        </View>
                     </TouchableOpacity>
                     <Button type="dark" style={styles.button} onPress={props.takePhoto}>Tomar foto</Button>
                     <Button type="dark" style={styles.button} onPress={props.pickImage}>Seleccionar de galería</Button>
@@ -48,15 +51,16 @@ const styles = StyleSheet.create({
         borderColor: Colors.dark,
         borderTopRightRadius: 25,
         borderTopLeftRadius: 25,
-       // padding: 15,
         alignItems: 'center',
         justifyContent: 'center',
     },
-    icon: {
+    iconContainer: {
         position: 'absolute',
+        top: 15,
+        left: 15,
+    },
+    icon: {
         fontSize: 25,
-        top: 5,
-        left: 5,
     },
     button: {
         margin: 10,

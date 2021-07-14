@@ -56,7 +56,7 @@ const HomeScreen = (props) => {
             <View style={styles.listContainer}>
                 { loading && ads.length==0 ? <ActivityIndicator size="large" color={Colors.dark} /> : null }
                 <FlatList 
-                    keyExtractor={(item) => item.img}
+                    keyExtractor={(item) => item.imgRef}
                     data={ads}
                     numColumns={2}
                     renderItem={({item}) => (
