@@ -40,7 +40,7 @@ const HomeScreen = (props) => {
         props.navigation.addListener("focus", () => getAds());
 
         return () => {
-            navigation.removeListener("focus", () => getAds());
+            props.navigation.removeListener("focus", () => getAds());
         }
 
     },[props.navigation]);
@@ -61,12 +61,17 @@ const HomeScreen = (props) => {
                     numColumns={2}
                     renderItem={({item}) => (
                         <Card 
+                            type="emerald"
                             title={item.title}
                             description={item.description}
                             img={item.img}
                             onPress={() => handleNavigation(item)}
                         />
                     )}
+                    onRefresh={() => {
+                        getAds()
+                    }}
+                    refreshing={false}
                 /> 
             </View>
 

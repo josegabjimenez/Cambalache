@@ -7,8 +7,8 @@ import LogInScreen from './src/screens/Auth/LogInScreen';
 import SignUpScreen from './src/screens/Auth/SignUpScreen';
 import HomeStack from './src/screens/Home/HomeStack';
 import AdPostScreen from './src/screens/Post/AdPostScreen';
-import ProfileScreen from './src/screens/Profile/ProfileScreen';
 import LoadingScreen from './src/screens/LoadingScreen';
+import ProfileStack from './src/screens/Profile/ProfileStack';
 
 //Fonts
 import * as Font from 'expo-font';
@@ -83,7 +83,7 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Inicio" component={HomeStack} />
       <Tab.Screen name="Publicar" component={AdPostScreen} />
-      <Tab.Screen name="Perfil" component={ProfileScreen} />
+      <Tab.Screen name="Perfil" component={ProfileStack} />
     </Tab.Navigator>
   )
 }

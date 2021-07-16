@@ -11,9 +11,54 @@ const IMAGE_HEIGHT = (Dimensions.get('window').height) * 0.15;
 const DESCRIPTION_HEIGHT = (CARD_HEIGHT - IMAGE_HEIGHT) * 0.65;
 
 const Card = (props) => {
+
+    const selectVariant = () => {
+        switch(props.type){
+            case 'emerald':
+                return [
+                    {
+                        backgroundColor: Colors.emerald,
+                    },
+                    {
+                        color: Colors.dark,
+                    }
+                ]
+            case 'dark':
+                return [
+                    {
+                        backgroundColor: Colors.dark,
+                    },
+                    {
+                        color: Colors.light,
+                    }
+                ]
+            case 'light':
+                return [
+                    {
+                        backgroundColor: Colors.light,
+                    },
+                    {
+                        color: Colors.dark,
+                    }
+                ]
+            default:
+                return [
+                    {
+                        backgroundColor: Colors.light,
+                    },
+                    {
+                        color: Colors.dark,
+                    }
+                ]
+        }
+    }
+
+    const containerStyle = selectVariant()[0];
+    const textStyle = selectVariant()[1];
+
     return (
         <TouchableOpacity onPress={props.onPress}>
-            <View style={styles.container}>
+            <View style={[styles.container, containerStyle]}>
                 <View style={styles.imageContainer}>
                     <Image
                         style={styles.image}
@@ -22,12 +67,12 @@ const Card = (props) => {
                     />
                 </View>
 
-                <View style={styles.titleContainer}>
-                    <CustomText type="bold" style={{fontSize: 16}}>{props.title}</CustomText>
+                <View style={[styles.titleContainer]}>
+                    <CustomText type="bold" style={[{fontSize: 16}, textStyle]}>{props.title}</CustomText>
                 </View>
 
                 <View style={styles.descriptionContainer}>
-                    <CustomText type="regular">{props.description}</CustomText>
+                    <CustomText type="regular" style={textStyle}>{props.description}</CustomText>
                 </View>
             </View>
         </TouchableOpacity>
@@ -40,7 +85,6 @@ const styles = StyleSheet.create({
     container: {
         width: CARD_WIDTH,
         height: CARD_HEIGHT,
-        backgroundColor: Colors.emerald,
         borderWidth: 2,
         borderColor: Colors.dark,
         borderRadius: 17,

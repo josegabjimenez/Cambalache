@@ -38,11 +38,11 @@ const LogInScreen = (props) => {
         setPassword("");
     }, []);
 
-    useEffect(() => {
-        console.log("Email: " + email);
-        console.log("Password: " + password);
-    },[email, password]);
-
+    //DEBUG
+    // useEffect(() => {
+    //     console.log("Email: " + email);
+    //     console.log("Password: " + password);
+    // },[email, password]);
 
     return (
 
@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
     logoContainer: {
         width: '100%',
         alignItems: 'center',
-        //backgroundColor: 'blue',
     },
     logo: {
         fontSize: 60,
@@ -98,7 +97,6 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         marginTop: 25,
-        //backgroundColor: 'red',
     },
     submitSection: {
         width: '100%',

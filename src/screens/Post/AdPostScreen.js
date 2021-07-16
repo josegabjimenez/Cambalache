@@ -206,13 +206,15 @@ const AdPostScreen = (props) => {
                         Publicar
                     </Button>
 
-                    <Button 
+                    {
+                    //DEBUG BUTTON
+                    /* <Button 
                         style={styles.button} 
                         type="emerald" 
                         onPress={() => console.log(state)} 
                     >
                         Log
-                    </Button>
+                    </Button> */}
 
                     { isButtonDisabled && <CustomText type="italic" style={styles.disabledText}>Debes llenar todos los campos para poder publicar tu artículo.</CustomText> }
                 </View>

@@ -84,6 +84,31 @@ const Button = (props) => {
                         fontSize: 15
                     }
                 }
+            case 'delete':
+                return {
+                    container: {
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: Colors.carmin,
+                        borderWidth: 2,
+                        borderColor: "#000000",
+                        borderRadius: 15,
+                        width: '85%',
+                        height: 45,
+                        shadowColor: "#000",
+                        shadowOffset: {
+                            width: 0,
+                            height: 4,
+                        },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 4,
+                        elevation: 15,
+                    },
+                    text: {
+                        color: Colors.light,
+                        fontSize: 15
+                    }
+                }
             default:
                 return {
                     container: {

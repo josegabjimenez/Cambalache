@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 //Colors
 import Colors from '../res/Colors';
 
-const HEIGHT_SCREEN = Dimensions.get('window').height;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 const ImagePickerModal = (props) => {
 
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         width: '100%',
-        height: HEIGHT_SCREEN * 0.4,
+        height: SCREEN_HEIGHT * 0.4,
         marginTop: 200,
         backgroundColor: Colors.emerald,
         borderWidth: 2,

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, TextInput, View, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomText from '../../components/CustomText';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
@@ -40,11 +39,11 @@ const SignUpScreen = (props) => {
         setPassword("");
     }, []);
 
+    //DEBUG
     // useEffect(() => {
     //     console.log("Email: " + email);
     //     console.log("Password: " + password);
     // },[email, password]);
-
 
     return (
 
@@ -92,7 +91,6 @@ const styles = StyleSheet.create({
     logoContainer: {
         width: '100%',
         alignItems: 'center',
-        //backgroundColor: 'blue',
     },
     logo: {
         fontSize: 60,
@@ -101,7 +99,6 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         marginTop: 25,
-        //backgroundColor: 'red',
     },
     submitSection: {
         width: '100%',
