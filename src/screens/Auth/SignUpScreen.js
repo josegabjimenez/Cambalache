@@ -27,8 +27,12 @@ const SignUpScreen = (props) => {
         } else {
             try {
                 await firebase.auth.createUserWithEmailAndPassword(email,password);
-                //console.log(res);
+                const user = firebase.auth.currentUser;
+                await user.updateProfile({
+                    displayName: name,
+                })
             } catch (err) {
+                console.log(err);
                 Alert.alert("Oops, algo ha salido mal...\n" + err);
             }
         }

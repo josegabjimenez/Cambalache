@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, View, Dimensions, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Dimensions, TouchableOpacity } from 'react-native';
 import CustomText from './CustomText';
+import CacheImage from './CacheImage';
 
 //Colors
 import Colors from '../res/Colors';
@@ -60,10 +61,12 @@ const Card = (props) => {
         <TouchableOpacity onPress={props.onPress}>
             <View style={[styles.container, containerStyle]}>
                 <View style={styles.imageContainer}>
-                    <Image
+                    <CacheImage 
                         style={styles.image}
-                        source={{uri: props.img}}
-
+                        state={{
+                            img: props.img,
+                            imgRef: props.imgRef
+                        }}
                     />
                 </View>
 
@@ -100,7 +103,7 @@ const styles = StyleSheet.create({
     imageContainer: {
         width: '100%',
         height: IMAGE_HEIGHT,
-        backgroundColor: Colors.greenDark,
+        backgroundColor: '#E1E5EA',
         borderRadius: 15,
         shadowColor: "#000",
         shadowOffset: {

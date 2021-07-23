@@ -8,10 +8,27 @@ import Colors from '../res/Colors';
 const ModalPicker = (props) => {
 
     const categories = [
-        {category: "Televisores", key:"1"},
-        {category: "Computadores", key:"2"},
-        {category: "Carros", key:"3"},
-        {category: "Mobiliaria", key:"4"},
+        {category: "Accesorios", key:"1"},
+        {category: "Agricultura", key:"2"},
+        {category: "Arte", key:"3"},
+        {category: "Belleza y cuidado personal", key:"4"},
+        {category: "Carros", key:"5"},
+        {category: "Motos", key:"6"},
+        {category: "Transporte", key:"7"},
+        {category: "Celulares", key:"8"},
+        {category: "Computación", key:"9"},
+        {category: "Videojuegos", key:"10"},
+        {category: "Deportes", key:"11"},
+        {category: "Electrodomésticos", key:"12"},
+        {category: "Herramientas", key:"13"},
+        {category: "Hogar y muebles", key:"14"},
+        {category: "Música", key:"15"},
+        {category: "Libros", key:"16"},
+        {category: "Ropa", key:"17"},
+        {category: "Otros", key:"18"},
+
+
+
     ]
 
     const onPressItem = (item) => {

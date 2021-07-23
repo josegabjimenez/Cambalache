@@ -9,10 +9,13 @@ import firebase from '../../database/firebase';
 
 //Colors
 import Colors from '../../res/Colors';
+import CacheImage from '../../components/CacheImage';
 
 const HomeScreen = (props) => {
 
     const [ads, setAds] = useState([]);
+    const [allAds, setAllAds] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
     const [loading, setLoading] = useState(true);
 
     //Make a get petition to firestore of all the ads published.
@@ -22,6 +25,7 @@ const HomeScreen = (props) => {
             const res = await firebase.db.collection("ads").get(); //Response of firestore
             const result = res.docs.map(docSnap => docSnap.data()); //Convert all the docs to data
             setAds(result);
+            setAllAds(result);
             setLoading(false);
             // console.log(result);
 
@@ -30,14 +34,33 @@ const HomeScreen = (props) => {
         }
     }
 
+    //Filter the ads list to perform a search 
+    const handleQuery = (query) => {
+        if(query != ""){
+            setIsSearching(true);
+            const filteredAds = allAds.filter(ad => {
+                return ad.title.toLowerCase().includes(query.toLowerCase()) || 
+                ad.category.toLowerCase().includes(query.toLowerCase());
+            })
+            setAds(filteredAds);
+        } else {
+            setIsSearching(false);
+            //getAds();
+        }
+
+
+    }
+
     //Navigates to the detail screen.
     const handleNavigation = (item) => {
         props.navigation.navigate("Detalles", item);
     }
 
     useEffect(() => {
-
-        props.navigation.addListener("focus", () => getAds());
+        
+        if(!isSearching){
+            props.navigation.addListener("focus", () => getAds());
+        }
 
         return () => {
             props.navigation.removeListener("focus", () => getAds());
@@ -45,9 +68,19 @@ const HomeScreen = (props) => {
 
     },[props.navigation]);
 
+    useEffect(() => {
+        if(!isSearching){
+            getAds();
+        }
+        return () => {
+            
+        }
+    }, [isSearching])
+
+
     return (
         <View style={styles.container}>
-            <Searcher>Buscar...</Searcher>
+            <Searcher onChange={handleQuery}>Buscar...</Searcher>
 
             <View style={styles.listTitle}>
                 <CustomText type="bold" style={{fontSize: 16}}>Productos</CustomText>
@@ -65,6 +98,7 @@ const HomeScreen = (props) => {
                             title={item.title}
                             description={item.description}
                             img={item.img}
+                            imgRef={item.imgRef}
                             onPress={() => handleNavigation(item)}
                         />
                     )}
@@ -74,7 +108,6 @@ const HomeScreen = (props) => {
                     refreshing={false}
                 /> 
             </View>
-
         </View>
     )
 }
@@ -96,4 +129,8 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
     },
+    image: {
+        width: 300,
+        height: 300,
+    }
 })

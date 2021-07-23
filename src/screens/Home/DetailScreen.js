@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Image, Dimensions, ScrollView, Linking, Platform } from 'react-native';
+import { StyleSheet, View, Image, Dimensions, ScrollView, Linking, Platform, TouchableOpacity } from 'react-native';
 import CustomText from '../../components/CustomText';
+import CacheImage from '../../components/CacheImage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Button from '../../components/Button';
+import ImageViewModal from '../../components/ImageViewModal';
 
 //Colors
 import Colors from '../../res/Colors';
@@ -12,10 +14,15 @@ const IMAGE_HEIGHT = (Dimensions.get('window').height) * 0.31;
 const DetailScreen = (item) => {
 
     const [state, setState] = useState({});
+    const [isImageViewModalActive, setIsImageViewModalActive] = useState(false);
 
     //Set to the state all the item params.
     const getData = () => {
         setState(item.route.params);
+    }
+
+    const whatsappMessage = () => {
+        Linking.openURL('http://api.whatsapp.com/send?phone=57' + state.contact);
     }
 
     //Open phone to call
@@ -31,17 +38,22 @@ const DetailScreen = (item) => {
         getData();
     }, []);
 
+    const imageState = {
+        img: item.route.params.img,
+        imgRef: item.route.params.imgRef,
+    }
+
     return (
         <ScrollView>
             <View style={styles.container}>
 
-                <View style={styles.imageContainer}>
-                    <Image 
+                <TouchableOpacity style={styles.imageContainer} onPress={() => setIsImageViewModalActive(true)}>
+                    <CacheImage 
                         style={styles.image}
-                        source={{uri: state.img}}
+                        state={imageState}
                         resizeMode="cover"
                     />
-                </View>
+                </TouchableOpacity>
 
                 <View style={styles.infoContainer}>
                     <CustomText type="bold" style={styles.title}>{state.title}</CustomText>
@@ -64,8 +76,11 @@ const DetailScreen = (item) => {
 
                 </View>
 
-                <Button type="dark" style={{marginTop: 25, marginBottom: 25,}} onPress={phoneCall} >Llamar</Button>
+                <Button type="emerald" social="whatsapp" style={{marginTop: 25}} onPress={whatsappMessage}>Envíar un mensaje</Button>
+                <Button type="dark" style={{marginTop: 25, marginBottom: 100}} onPress={phoneCall} >Llamar</Button>
+
             </View>
+            <ImageViewModal state={state} isActive={isImageViewModalActive} close={() => setIsImageViewModalActive(false)}/>
         </ScrollView>
     )
 }
@@ -74,8 +89,8 @@ export default DetailScreen
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         width: '100%',
+        height: Dimensions.get('window').height * 1,
         alignItems: 'center',
     },
     imageContainer: {

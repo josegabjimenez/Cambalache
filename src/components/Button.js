@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import CustomText from './CustomText';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 //Colors
 import Colors from '../res/Colors';
@@ -63,6 +64,7 @@ const Button = (props) => {
                 return {
                     container: {
                         alignItems: 'center',
+                        flexDirection: 'row',
                         justifyContent: 'center',
                         backgroundColor: Colors.emerald,
                         borderWidth: 2,
@@ -148,6 +150,15 @@ const Button = (props) => {
         )
     }
 
+    if(props.social == "whatsapp"){
+        return (
+            <TouchableOpacity style={[containerStyle, props.style]} onPress={props.onPress}>
+                <Icon style={styles.icon} name="whatsapp"/>
+                <CustomText style={textStyle} type="bold">{props.children}</CustomText>
+            </TouchableOpacity>
+        )
+    }
+
     return (
 
         <TouchableOpacity style={[containerStyle, props.style]} onPress={props.onPress}>
@@ -181,5 +192,9 @@ const styles = StyleSheet.create({
     disabledText: {
         color: Colors.light,
         fontSize: 15
+    },
+    icon: {
+        fontSize: 26,
+        marginRight: 10
     }
 });

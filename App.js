@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
+import { LogBox } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Dimensions } from 'react-native';
 import AuthMethodScreen from './src/screens/Auth/AuthMethodScreen';
@@ -135,4 +136,4 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({});
+LogBox.ignoreLogs(['Setting a timer']);

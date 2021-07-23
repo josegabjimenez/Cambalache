@@ -8,7 +8,7 @@ import Colors from '../res/Colors';
 
 const Searcher = (props) => {
     return (
-        <Input type="emerald">Buscar...</Input>
+        <Input type="emerald" onChange={query => props.onChange(query)}>Buscar...</Input>
     )
 }
 

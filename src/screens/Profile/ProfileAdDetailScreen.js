@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Image, Dimensions, ScrollView, Linking, Platform, Alert } from 'react-native';
+import { StyleSheet, View, Image, Dimensions, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import CustomText from '../../components/CustomText';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Button from '../../components/Button';
+import CacheImage from '../../components/CacheImage';
+import ImageViewModal from '../../components/ImageViewModal';
 import * as Haptics from 'expo-haptics';
 
 //Firebase
@@ -18,6 +20,7 @@ const IMAGE_HEIGHT = SCREEN_HEIGHT * 0.31;
 const DetailScreen = (item) => {
 
     const [state, setState] = useState({});
+    const [isImageViewActive, setIsImageViewActive] = useState(false);
     const [loading, setLoading] = useState(false);
     const adsRef = firebase.db.collection('ads');
 
@@ -41,6 +44,7 @@ const DetailScreen = (item) => {
                     try {
                         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
                         setLoading(true);
+                        await firebase.store.ref().child(`/items/${state.imgRef}.jpg`).delete();
                         await adsRef.doc(state.docId).delete() // Delete the document
                         item.navigation.goBack();
                         Alert.alert("Tu publicación ha sido eliminada correctamente.")
@@ -58,7 +62,10 @@ const DetailScreen = (item) => {
         getData();
     }, []);
 
-    console.log(item);
+    const imageState = {
+        img: item.route.params.img,
+        imgRef: item.route.params.imgRef,
+    }
 
     if (loading){
         return <LoadingScreen />
@@ -68,13 +75,13 @@ const DetailScreen = (item) => {
         <ScrollView>
             <View style={styles.container}>
 
-                <View style={styles.imageContainer}>
-                    <Image 
+                <TouchableOpacity style={styles.imageContainer} onPress={() => setIsImageViewActive(true)}>
+                    <CacheImage 
                         style={styles.image}
-                        source={{uri: state.img}}
+                        state={imageState}
                         resizeMode="cover"
                     />
-                </View>
+                </TouchableOpacity>
 
                 <View style={styles.infoContainer}>
                     <CustomText type="bold" style={styles.title}>{state.title}</CustomText>
@@ -99,6 +106,7 @@ const DetailScreen = (item) => {
 
                 <Button type="delete" style={{marginTop: 25, marginBottom: 25,}} onPress={() => deleteAd()} >Eliminar</Button>
             </View>
+            <ImageViewModal isActive={isImageViewActive} state={state} close={() => setIsImageViewActive(false)}/>
         </ScrollView>
     )
 }

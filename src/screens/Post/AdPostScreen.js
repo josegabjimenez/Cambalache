@@ -110,8 +110,8 @@ const AdPostScreen = (props) => {
     const postData = async () => {
         try {
             //Post the current ad state to firebase storage
-            console.log("------------- Se ha posteado esto: ");
-            console.log(state);
+            // console.log("------------- Se ha posteado esto: ");
+            // console.log(state); //DEBUG
             await firebase.db.collection("ads").add(state);
             setLoading(false);
             Alert.alert("Tu anuncio se ha publicado con exito!");

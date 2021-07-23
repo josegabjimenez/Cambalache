@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Modal, TouchableOpacity, Dimensions } from 'react-native';
-import CustomText from './CustomText';
 import Button from './Button';
 import Icon from 'react-native-vector-icons/Ionicons';
 
