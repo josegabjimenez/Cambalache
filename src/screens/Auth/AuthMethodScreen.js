@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Alert, ActivityIndicator } fr
 import { LinearGradient } from 'expo-linear-gradient';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomText from '../../components/CustomText';
+import LogoImage from '../../components/LogoImage';
 import * as Google from 'expo-google-app-auth';
 
 //Firebase
@@ -14,6 +15,7 @@ import Colors from '../../res/Colors';
 const AuthMethodScreen = (props) => {
 
     const [googleSubmitting, setGoogleSubmitting] = useState(false);
+    const [error, setError] = useState("error tester");
 
     //Navigate to email login method
     const handleNavigation = () => {
@@ -26,6 +28,7 @@ const AuthMethodScreen = (props) => {
         const config = {
             iosClientId: `981453259779-gj8l7pplvka9jsn0fg1qbqgt8ae63428.apps.googleusercontent.com`,
             androidClientId: `981453259779-nc7eqq77b1rlttkqsn1nvpmt5f220553.apps.googleusercontent.com`,
+            androidStandaloneAppClientId: `981453259779-bai0hfjqn0l1lop9aojd73oait386hti.apps.googleusercontent.com`,
             scopes: ['profile','email'],
         }
 
@@ -44,9 +47,13 @@ const AuthMethodScreen = (props) => {
 
             } else {
                 Alert.alert('Se ha cancelado el inicio de sesión.')
+                setError("Se ha cancelado la vaina");
+                setGoogleSubmitting(false);
             }
         } catch (err) {
-            Alert.alert('Oops, algo ha salido mal...');
+            // setError(err);
+            Alert.alert('Oops, algo ha salido mal...\n' + err.message);
+            Alert.alert(err.message);
         }
     }
 
@@ -57,7 +64,8 @@ const AuthMethodScreen = (props) => {
 
         >
             <View style={styles.logoContainer}>
-                <CustomText style={styles.logo} type="bold">Cambalache</CustomText>
+                <LogoImage />
+                {/* <CustomText style={styles.logo} type="bold">Cambalache</CustomText> */}
             </View>
             <View style={styles.buttonContainer}> 
                 <TouchableOpacity style={styles.button} onPress={!googleSubmitting ? () => googleSignIn() : null}>
@@ -78,6 +86,9 @@ const AuthMethodScreen = (props) => {
                 </TouchableOpacity>
 
                 <CustomText type="italic" style={styles.textHelp} >Elige un método para iniciar sesión.</CustomText>
+            
+                {/* <CustomText type="bold">{error}</CustomText> */}
+            
             </View>
 
         </LinearGradient>

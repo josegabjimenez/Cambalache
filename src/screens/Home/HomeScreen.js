@@ -22,7 +22,7 @@ const HomeScreen = (props) => {
     const getAds = async () => {
         try {
             setLoading(true);
-            const res = await firebase.db.collection("ads").get(); //Response of firestore
+            const res = await firebase.db.collection("ads").orderBy("priority", "desc").get(); //Response of firestore
             const result = res.docs.map(docSnap => docSnap.data()); //Convert all the docs to data
             setAds(result);
             setAllAds(result);
@@ -42,7 +42,16 @@ const HomeScreen = (props) => {
                 return ad.title.toLowerCase().includes(query.toLowerCase()) || 
                 ad.category.toLowerCase().includes(query.toLowerCase());
             })
-            setAds(filteredAds);
+            const compare = (a,b) => {
+                if(a.priority < b.priority){
+                    return 1;
+                } 
+                if(a.priority > b.priority) {
+                    return -1;
+                }
+                return 0;
+            }            
+            setAds(filteredAds.sort(compare));
         } else {
             setIsSearching(false);
             //getAds();
@@ -99,6 +108,7 @@ const HomeScreen = (props) => {
                             description={item.description}
                             img={item.img}
                             imgRef={item.imgRef}
+                            priority={item.priority}
                             onPress={() => handleNavigation(item)}
                         />
                     )}

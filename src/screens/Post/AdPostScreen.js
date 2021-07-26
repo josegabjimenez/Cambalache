@@ -6,6 +6,7 @@ import ModalPicker from '../../components/ModalPicker';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Button from '../../components/Button';
 import ImagePickerModal from '../../components/ImagePickerModal';
+import ImageViewModal from '../../components/ImageViewModal';
 import * as ImagePicker from 'expo-image-picker';
 import LoadingScreen from '../LoadingScreen';
 
@@ -25,10 +26,12 @@ const AdPostScreen = (props) => {
         imgRef: "",
         category: "Seleccionar...",
         contact: "",
+        priority: "0",
         uid: firebase.auth.currentUser.uid,
     })
     const [isModalActive, setIsModalActive] = useState(false);
-    const [isImagePickerActive, setisImagePickerActive] = useState(false);
+    const [isImagePickerActive, setIsImagePickerActive] = useState(false);
+    const [isImageViewActive, setIsImageViewActive] = useState(false);
     const [isButtonDisabled, setisButtonDisabled] = useState(true);
     const [loading, setLoading] = useState(false);
 
@@ -41,6 +44,7 @@ const AdPostScreen = (props) => {
             imgRef: "",
             category: "Seleccionar...",
             contact: "",
+            priority: "0",
             uid: firebase.auth.currentUser.uid,
         });
     }
@@ -69,7 +73,7 @@ const AdPostScreen = (props) => {
         //If an image is selected, the image uri is set to the state 
         if(!result.cancelled){
             setState({...state, imgLocation: result.uri});
-            setisImagePickerActive(false);
+            setIsImagePickerActive(false);
         }
     }
 
@@ -84,7 +88,7 @@ const AdPostScreen = (props) => {
 
         //If the photo is not cancelled, the photo uri is set to the state
         if(!result.cancelled){
-            setisImagePickerActive(false);
+            setIsImagePickerActive(false);
             setState({...state, imgLocation: result.uri});
         }
     }
@@ -188,12 +192,16 @@ const AdPostScreen = (props) => {
                 </View>
 
                 <View style={{width: "100%", alignItems: 'center', marginBottom: 25}}>
-                    { state.imgLocation != "" && <Image style={styles.imagePreview} source={{uri: state.imgLocation}}/> }
+                    { state.imgLocation != "" && 
+                        <TouchableOpacity style={styles.imagePreviewContainer} onPress={() => setIsImageViewActive(true)}>
+                            <Image style={styles.imagePreview} source={{uri: state.imgLocation}}/> 
+                        </TouchableOpacity>
+                    }
 
                     <Button 
                         style={styles.button} 
                         type="light" 
-                        onPress={() => setisImagePickerActive(true)}
+                        onPress={() => setIsImagePickerActive(true)}
                     >
                         Subir foto
                     </Button>
@@ -238,9 +246,15 @@ const AdPostScreen = (props) => {
 
             <ImagePickerModal 
                 isActive={isImagePickerActive} 
-                close={() => setisImagePickerActive(false)} 
+                close={() => setIsImagePickerActive(false)} 
                 pickImage={pickImageFromGallery}
                 takePhoto={takePhotoFromCamera}
+            />
+
+            <ImageViewModal 
+                isActive={isImageViewActive}
+                close={() => setIsImageViewActive(false)}
+                uri={state.imgLocation}
             />
 
         </View>
@@ -316,7 +330,7 @@ const styles = StyleSheet.create({
     icon: {
         fontSize: 20,
     },
-    imagePreview: {
+    imagePreviewContainer: {
         width: '85%',
         height: Dimensions.get('window').height * 0.3,
         borderRadius: 15,
@@ -324,6 +338,15 @@ const styles = StyleSheet.create({
         borderColor: Colors.dark,
         marginTop: 25,
         marginBottom: 15,
+    },
+    imagePreview: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 13,
+        borderWidth: 1,
+        borderColor: Colors.dark,
+        // marginTop: 25,
+        // marginBottom: 15,
     },
     button: {
         marginTop: 25,

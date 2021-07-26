@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Modal, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, View, Modal, TouchableOpacity, Dimensions, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CacheImage from './CacheImage';
 
@@ -18,11 +18,20 @@ const ImageViewModal = (props) => {
             onRequestClose={() => props.close()}
         >
             <View style={styles.imageContainer}>
-                <CacheImage 
-                    style={styles.image} 
-                    state={props.state} 
-                    resizeMode="cover"
-                />
+                { props.uri ? (
+                    <Image 
+                        style={styles.image}
+                        source={{uri: props.uri}}
+                        resizeMode="cover"
+                    />
+                ) : (
+                    <CacheImage 
+                        style={styles.image} 
+                        state={props.state} 
+                        resizeMode="cover"
+                    />
+                )}
+ 
             </View>
             <TouchableOpacity style={styles.backgrond} onPress={() => props.close()}>
                 <Icon style={styles.icon} name="close-circle" />

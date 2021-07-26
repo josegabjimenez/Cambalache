@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import CustomText from '../../components/CustomText';
+import LogoImage from '../../components/LogoImage';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 
@@ -52,7 +53,8 @@ const LogInScreen = (props) => {
 
     >
         <View style={styles.logoContainer}>
-            <CustomText style={styles.logo} type="bold">Cambalache</CustomText>
+            <LogoImage />
+            {/* <CustomText style={styles.logo} type="bold">Cambalache</CustomText> */}
         </View>
 
         <View style={styles.inputContainer}> 

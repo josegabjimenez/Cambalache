@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import CustomText from '../../components/CustomText';
+import LogoImage from '../../components/LogoImage';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 
@@ -54,10 +55,10 @@ const SignUpScreen = (props) => {
         <LinearGradient
         style={styles.container}
         colors={[Colors.greenDark, Colors.emerald]}
-
-    >
+        >
         <View style={styles.logoContainer}>
-            <CustomText style={styles.logo} type="bold">Cambalache</CustomText>
+            <LogoImage />
+            <CustomText style={styles.logo} type="bold">Registro</CustomText>
         </View>
 
         <View style={styles.inputContainer}> 
@@ -97,12 +98,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     logo: {
-        fontSize: 60,
+        marginTop: 20,
+        fontSize: 30,
     },
     inputContainer: {
         width: '100%',
         alignItems: 'center',
-        marginTop: 25,
+        marginTop: 10,
     },
     submitSection: {
         width: '100%',

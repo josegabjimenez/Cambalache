@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Dimensions, TouchableOpacity } from 'react-native';
 import CustomText from './CustomText';
 import CacheImage from './CacheImage';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 //Colors
 import Colors from '../res/Colors';
@@ -59,7 +60,7 @@ const Card = (props) => {
 
     return (
         <TouchableOpacity onPress={props.onPress}>
-            <View style={[styles.container, containerStyle]}>
+            <View style={[styles.container, containerStyle, props.priority > 0 ? styles.prior : null]}>
                 <View style={styles.imageContainer}>
                     <CacheImage 
                         style={styles.image}
@@ -71,7 +72,9 @@ const Card = (props) => {
                 </View>
 
                 <View style={[styles.titleContainer]}>
-                    <CustomText type="bold" style={[{fontSize: 16}, textStyle]}>{props.title}</CustomText>
+                    <CustomText type="bold" style={[{fontSize: 16}, textStyle, props.priority > 0 ? {width: '90%'} : null]}>{props.title}</CustomText>
+                    { props.priority > 0 ? <Icon style={{fontSize: 14, color: Colors.carmin}} name="rocket" /> : null }
+                    
                 </View>
 
                 <View style={styles.descriptionContainer}>
@@ -100,6 +103,9 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
     },
+    prior: {
+        borderColor: 'red',
+    },
     imageContainer: {
         width: '100%',
         height: IMAGE_HEIGHT,
@@ -125,6 +131,8 @@ const styles = StyleSheet.create({
         height: 18,
         alignSelf: 'center',
         overflow: 'hidden',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         marginTop: 3,
     },
     descriptionContainer: {

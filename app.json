@@ -20,10 +20,17 @@
       "supportsTablet": true
     },
     "android": {
+      "config": {
+        "googleSignIn": {
+          "apiKey": "AIzaSyDHpO2Bdmt4hauuJcvDMGUJbF9FpAm6yEk",
+          "certificateHash": "B78BE6A67ED41C5F66102B061CB8711473C168E8"
+        }
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.josegabjimenez.cambalache"
     },
     "web": {
       "favicon": "./assets/favicon.png"
