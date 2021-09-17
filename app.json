@@ -1,7 +1,10 @@
 {
   "expo": {
-    "name": "cambalache",
+    "name": "Cambalache",
     "slug": "cambalache",
+    "privacy": "public",
+    "primaryColor": "#0ffcad",
+    "description": "A mobile app for bartering.",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
